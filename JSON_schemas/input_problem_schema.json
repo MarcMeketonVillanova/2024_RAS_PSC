@@ -1,0 +1,83 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "file:///c:",
+    "title": "RAS 2024 Problem Solving Competition - problem schema",
+    "type": "object",
+    "properties": {
+      "problem_name": {
+        "type": "string"
+      },
+      "yard_type": {"enum": ["through", "stub"]},
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "alpha_a": {
+            "type": "number"
+          },
+          "alpha_d": {
+            "type": "number"
+          },
+          "beta_a": {
+            "type": "number"
+          },
+          "beta_d": {
+            "type": "number"
+          },
+          "track_speed_kph": {
+            "type": "number"
+          },
+          "ladder_speed_kph": {
+            "type": "number"
+          },
+          "wagon_length_m": {
+              "type": "number"
+          }
+        },
+        "required": [
+          "alpha_a",
+          "alpha_d",
+          "beta_a",
+          "beta_d",
+          "track_speed_kph",
+          "ladder_speed_kph",
+          "wagon_length_m"
+        ]
+      },
+      "track_lengths_m": {
+        "type": "array",
+        "items": {
+          "type": "number"
+        }
+      },
+      "left_lead_m": {"type": "number"},
+      "right_lead_m": {"type": "number", "default": 0},
+      "track_occupancies": {
+        "type": "object",
+        "additionalProperties": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "propertyNames": {
+          "type": "string"
+        }
+      },    
+      "desired_block_order": {
+        "type": "array",
+        "items": {
+          "type": "integer"
+        }
+      }
+    },
+    "required": [
+      "problem_name",
+      "yard_type",
+      "parameters",
+      "track_lengths_m",
+      "left_lead_m",
+      "right_lead_m",
+      "track_occupancies",
+      "desired_block_order"
+    ]
+  }

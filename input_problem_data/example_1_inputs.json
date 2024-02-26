@@ -1,0 +1,21 @@
+{
+    "problem_name": "Example 1",
+    "yard_type": "stub",
+    "parameters": {
+        "alpha_a": 6750,
+        "alpha_d": 6750,
+        "beta_a": 292.5,
+        "beta_d": 225,
+        "track_speed_kph": 16,
+        "ladder_speed_kph": 10,
+        "wagon_length_m": 15
+        },
+    "track_lengths_m": [2000, 1900, 1800, 1700, 500],
+    "left_lead_m": 2000,
+    "right_lead_m":   0,
+    "track_occupancies": {
+        "1": [1, 1, 2, 2, 0, 4],
+        "2": [2, 0, 4, 0, 1]
+        },
+    "desired_block_order": [0, 2, 1, 4]
+  }
