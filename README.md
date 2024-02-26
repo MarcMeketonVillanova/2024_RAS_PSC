@@ -8,4 +8,4 @@ Switching wagons in large flat yards is arguably one of the most complex daily a
 Little has been done to develop algorithms to assist engineers and conductors that have to figure out the sequence of steps to take to properly and efficiently sort a set of wagons .
 The goal of this problem solving competition is to build open-source software and algorithms that can plan out the sequence of moves required to sort.
 
-Please refer to  for details
+Please refer to https://github.com/MarcMeketonVillanova/2024_RAS_PSC/blob/main/competition_description/2024%20INFORMS%20Railway%20Application%20Section%20Problem%20Solving%20Competition.pdf for details
