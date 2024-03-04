@@ -68,6 +68,12 @@
         "items": {
           "type": "integer"
         }
+      },
+      "other_blocks_to_form": {
+        "type": "array",
+        "items": {
+          "type": "integer"
+        }
       }
     },
     "required": [
@@ -78,6 +84,7 @@
       "left_lead_m",
       "right_lead_m",
       "track_occupancies",
-      "desired_block_order"
+      "desired_block_order",
+      "other_blocks_to_form"
     ]
   }

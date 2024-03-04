@@ -17,5 +17,6 @@
         "1": [1, 1, 2, 2, 0, 4],
         "2": [2, 0, 4, 0, 1]
         },
-    "desired_block_order": [0, 2, 1, 4]
+    "desired_block_order": [0, 2, 1, 4],
+    "other_blocks_to_form": []
   }
