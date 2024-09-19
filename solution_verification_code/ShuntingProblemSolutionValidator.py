@@ -18,6 +18,8 @@ class Solution:
     num_wagons: int
     track: int
     TRK: List[List[int]] = field(default_factory=list)
+    used_track_length: list[float] = field(default_factory=list)
+    tracks_violating_length: list[int] = field(default_factory=list)
     Shunter: List[int] = field(default_factory=list)
     Delta_Tracks: float = 0.0
     ladder_time: float = 0.0
@@ -70,7 +72,6 @@ class Input:
         self.shunter = []
 
 
-# Processing input data and computation
 def process_input(input_path: str, solution_path: str):
     with open(input_path, 'r') as file:
         raw_data = json.load(file)
@@ -92,9 +93,12 @@ def process_input(input_path: str, solution_path: str):
 
 def calculate(input_data: Input, train_movements: List[TrainMovement], output: List[Solution]):
     initialize = Solution(movement='', num_wagons=0, track=0,
-                          TRK=[list(track) for track in input_data.track_occupancies])
+                          TRK=[list(track) for track in input_data.track_occupancies],
+                          used_track_length=[0.0] * len(input_data.track_lengths_m))
     for trk in initialize.TRK:
         trk.reverse()
+    for trk_len in initialize.used_track_length:
+        trk_len = 0.0
     output.append(initialize)
 
     for movement in train_movements:
@@ -102,7 +106,8 @@ def calculate(input_data: Input, train_movements: List[TrainMovement], output: L
         number = movement.num_wagons
 
         solution = Solution(movement=movement.movement, num_wagons=movement.num_wagons, track=movement.track,
-                            TRK=[[] for _ in range(len(input_data.track_lengths_m))])
+                            TRK=[[] for _ in range(len(input_data.track_lengths_m))],
+                            used_track_length=[0] * len(input_data.track_lengths_m))
 
         if movement.movement == "pull":
             for _ in range(number):
@@ -124,7 +129,6 @@ def calculate(input_data: Input, train_movements: List[TrainMovement], output: L
                 solution.movement_time = 0
                 solution.movement_time_reverse = 0
             else:
-                # the modification，input_data.track_lengths_m[track] changed to input_data.track_lengths_m[track]/2
                 solution.movement_time = (input_data.track_lengths_m[track] / 2) / (
                             1000 * input_data.parameter_track_speed_kph / 3600) + (
                                                      input_data.parameter_track_speed_kph / 3600 / 2) * (
@@ -154,7 +158,7 @@ def calculate(input_data: Input, train_movements: List[TrainMovement], output: L
                 solution.movement_time = 0
                 solution.movement_time_reverse = 0
             else:
-                # the modification，input_data.track_lengths_m[track] changed to input_data.track_lengths_m[track]/2
+                # 做修改，input_data.track_lengths_m[track]改为 input_data.track_lengths_m[track]/2
                 solution.movement_time = (input_data.track_lengths_m[track] / 2) / (
                             1000 * input_data.parameter_track_speed_kph / 3600) + (
                                                      input_data.parameter_track_speed_kph / 3600 / 2) * (
@@ -167,6 +171,10 @@ def calculate(input_data: Input, train_movements: List[TrainMovement], output: L
         for j in range(len(input_data.track_lengths_m)):
             solution.TRK[j].extend(input_data.track_occupancies[j])
             solution.TRK[j].reverse()
+            used_track_length = len(solution.TRK[j]) * input_data.parameter_wagon_length_m
+            solution.used_track_length[j] = used_track_length
+            if used_track_length > input_data.track_lengths_m[j]:
+                solution.tracks_violating_length.append(j)
 
         solution.ladder_time = (solution.Delta_Tracks * input_data.Distance_on_ladder_between_tracks / 1000 /
                                 input_data.parameter_ladder_speed_kph * 3600)
@@ -177,8 +185,12 @@ def calculate(input_data: Input, train_movements: List[TrainMovement], output: L
 def save_results(_results: List[Solution], output_path: str):
     max_tracks = max(len(solution.TRK) for solution in _results) if results else 0
     track_columns = [f"TRK_{j + 1}" for j in range(max_tracks)]
-    columns = ["movement", "num_wagons", "track", "Delta_Tracks", "ladder_time", "an", "dn", "an_reverse",
-               "dn_reverse", "movement_time", "movement_time_reverse", "Total_time", "Shunter"] + track_columns
+    track_length_used_columns = [f"TRK_LEN{j + 1}" for j in range(max_tracks)]
+    columns = (["movement", "num_wagons", "track", "Delta_Tracks", "ladder_time", "an", "dn", "an_reverse",
+               "dn_reverse", "movement_time", "movement_time_reverse", "Total_time", "Shunter",
+                "Tracks_length_violated"]
+               + track_columns
+               + track_length_used_columns)
 
     data = []
     for s in _results:
@@ -195,12 +207,14 @@ def save_results(_results: List[Solution], output_path: str):
             s.movement_time,
             s.movement_time_reverse,
             s.Total_time,
-            ''.join(map(str, s.Shunter))
+            ''.join(map(str, s.Shunter)),
+            ','.join(map(str, s.tracks_violating_length))
         ]
 
         track_data = [''.join(map(str, trk)) for trk in s.TRK]
         track_data.extend([''] * (max_tracks - len(s.TRK)))
         row.extend(track_data)
+        row.extend(s.used_track_length)
 
         data.append(row)
 
